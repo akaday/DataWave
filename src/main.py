@@ -1,5 +1,3 @@
-# src/main.py
-
 import sys
 import os
 
@@ -19,5 +17,8 @@ if __name__ == "__main__":
     ftp_response = datawave.fetch_ftp("ftp://example.com", "user", "password")
     if ftp_response:
         print("FTP Response:", ftp_response)
+    
+    # SMTP Example
+    datawave.send_email("smtp.example.com", 465, "user@example.com", "password", "recipient@example.com", "Test Subject", "Email body")
     
     datawave.close()
