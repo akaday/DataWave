@@ -21,4 +21,9 @@ if __name__ == "__main__":
     # SMTP Example
     datawave.send_email("smtp.example.com", 465, "user@example.com", "password", "recipient@example.com", "Test Subject", "Email body")
     
+    # SFTP Example
+    sftp_response = datawave.fetch_sftp("sftp.example.com", 22, "user", "password", "/path/to/remote/file")
+    if sftp_response:
+        print("SFTP Response:", sftp_response)
+    
     datawave.close()
