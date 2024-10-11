@@ -3,6 +3,7 @@ import pycurl
 from io import BytesIO
 import smtplib
 from email.mime.text import MIMEText
+import paramiko
 
 class DataWave:
     def __init__(self):
@@ -43,6 +44,19 @@ class DataWave:
             print("Email sent successfully.")
         except Exception as e:
             print(f"Failed to send email: {e}")
+
+    def fetch_sftp(self, hostname, port, username, password, remote_path):
+        try:
+            transport = paramiko.Transport((hostname, port))
+            transport.connect(username=username, password=password)
+            sftp = paramiko.SFTPClient.from_transport(transport)
+            with sftp.open(remote_path, 'r') as file:
+                data = file.read().decode('utf-8')
+            sftp.close()
+            transport.close()
+            return data
+        except Exception as e:
+            print(f"Failed to fetch SFTP: {e}")
 
     def close(self):
         self.curl.close()
