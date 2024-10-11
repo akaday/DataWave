@@ -1,6 +1,8 @@
 import requests
 import pycurl
 from io import BytesIO
+import smtplib
+from email.mime.text import MIMEText
 
 class DataWave:
     def __init__(self):
@@ -29,6 +31,18 @@ class DataWave:
         except pycurl.error as e:
             print(f"Failed to fetch {ftp_url}: {e}")
 
+    def send_email(self, smtp_server, port, username, password, to_email, subject, body):
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = username
+        msg['To'] = to_email
+        try:
+            with smtplib.SMTP_SSL(smtp_server, port) as server:
+                server.login(username, password)
+                server.sendmail(username, [to_email], msg.as_string())
+            print("Email sent successfully.")
+        except Exception as e:
+            print(f"Failed to send email: {e}")
+
     def close(self):
         self.curl.close()
-
