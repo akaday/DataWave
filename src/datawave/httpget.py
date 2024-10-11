@@ -1,4 +1,5 @@
 import requests
+from io import BytesIO
 import smtplib
 from email.mime.text import MIMEText
 import paramiko
@@ -50,6 +51,9 @@ class DataWave:
         except Exception as e:
             print(f"Failed to fetch SFTP: {e}")
 
+    def close(self):
+        pass  # No resources to close in this simplified version
+
 if __name__ == "__main__":
     datawave = DataWave()
     
@@ -70,3 +74,5 @@ if __name__ == "__main__":
     sftp_response = datawave.fetch_sftp("sftp.example.com", 22, "user", "password", "/path/to/remote/file")
     if sftp_response:
         print("SFTP Response:", sftp_response)
+    
+    datawave.close()
