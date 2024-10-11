@@ -1,16 +1,10 @@
 import requests
-import pycurl
-from io import BytesIO
 import smtplib
 from email.mime.text import MIMEText
 import paramiko
+from ftplib import FTP
 
 class DataWave:
-    def __init__(self):
-        self.buffer = BytesIO()
-        self.curl = pycurl.Curl()
-        self.curl.setopt(pycurl.WRITEFUNCTION, self.buffer.write)
-
     def fetch_url(self, url):
         try:
             response = requests.get(url)
@@ -20,16 +14,14 @@ class DataWave:
             print(f"Failed to fetch {url}: {e}")
 
     def fetch_ftp(self, ftp_url, username, password):
-        self.buffer.seek(0)
-        self.buffer.truncate()
-        self.curl.setopt(pycurl.URL, ftp_url)
-        self.curl.setopt(pycurl.USERNAME, username)
-        self.curl.setopt(pycurl.PASSWORD, password)
         try:
-            self.curl.perform()
-            body = self.buffer.getvalue().decode('utf-8')
-            return body
-        except pycurl.error as e:
+            ftp = FTP(ftp_url)
+            ftp.login(user=username, passwd=password)
+            data = []
+            ftp.retrlines('RETR ' + '/path/to/remote/file', data.append)
+            ftp.quit()
+            return '\n'.join(data)
+        except Exception as e:
             print(f"Failed to fetch {ftp_url}: {e}")
 
     def send_email(self, smtp_server, port, username, password, to_email, subject, body):
@@ -58,5 +50,23 @@ class DataWave:
         except Exception as e:
             print(f"Failed to fetch SFTP: {e}")
 
-    def close(self):
-        self.curl.close()
+if __name__ == "__main__":
+    datawave = DataWave()
+    
+    # HTTP Example
+    response = datawave.fetch_url("https://example.com")
+    if response:
+        print("HTTP Response:", response)
+    
+    # FTP Example
+    ftp_response = datawave.fetch_ftp("ftp.example.com", "user", "password")
+    if ftp_response:
+        print("FTP Response:", ftp_response)
+    
+    # SMTP Example
+    datawave.send_email("smtp.example.com", 465, "user@example.com", "password", "recipient@example.com", "Test Subject", "Email body")
+    
+    # SFTP Example
+    sftp_response = datawave.fetch_sftp("sftp.example.com", 22, "user", "password", "/path/to/remote/file")
+    if sftp_response:
+        print("SFTP Response:", sftp_response)
