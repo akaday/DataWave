@@ -1,5 +1,4 @@
 import requests
-from io import BytesIO
 import smtplib
 from email.mime.text import MIMEText
 import paramiko
